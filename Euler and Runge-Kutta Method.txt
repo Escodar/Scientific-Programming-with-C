@@ -1,0 +1,62 @@
+#include <stdio.h>
+
+double euler(
+double x0,
+double y0,
+double (*g)(double,double),
+double h,
+double xlast
+)
+{
+	printf("x		f(x)\n");
+	for(;x0<=xlast; x0 = x0+h)
+	{
+		printf("%15.6g		%15.6g\n",x0,y0);
+		y0 = y0 + h*g(x0,y0);
+	}
+	
+	return(y0);
+}
+
+double runge(
+double x0,
+double y0,
+double (*g)(double,double),
+double h,
+double xlast
+)
+{
+	double ta,tb,tc,td;
+	printf("x		f(x)\n");
+	for(;x0<=xlast;x0 = x0 + h)
+	{
+		printf("%15.6g		%15.6g\n",x0,y0);
+		ta = h*g(x0,y0);
+		tb = h*g(x0+h/2.0, y0+ta/2.0);
+		tc = h*g(x0+h/2.0,y0+tb/2.0);
+		td = h*g(x0+h,y0+tc);
+		
+		y0 = y0 + (ta + 2.0*tb + 2.0*tc + td) / 6.0;
+	}
+	return (y0);
+}
+
+double func(double x,double y)
+{
+	return (10*x + y - 8);
+}
+
+int main()
+{
+	double x00, y00, hh, xn,res1,res2; 
+	printf("\nEnter x0,y0,h,xn");
+	scanf("%lf%lf%lf%lf",&x00,&y00,&hh,&xn);
+	
+	res1=euler(x00,y00,func,hh,xn);
+	res2=runge(x00,y00,func,hh,xn);
+    
+	double exact = -3.845;
+	printf("error of euler %lf",(res1-exact)/exact);
+	printf("\nerror of rkt %lf",(res2-exact)/exact);
+		
+}
