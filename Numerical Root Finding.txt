@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#define MAX 100
+#define TRUE 1
+#define FALSE 0
+
+void find_interval(double (*f)(int,double[],double),double,double ,double ,double *,double *,double *,double *,int);
+double polysum (int,double[],double);
+
+int main()
+{
+	
+	int i,num;
+	double initial_boundary, final_boundary,xleft,xright,root,x,stepsize,*A,*B;
+	
+	#define A(I) (*(A + I))
+	#define B(I) (*(B + I))
+	printf("Enter degree of the polynom: ");
+	scanf("%d",&num);
+	
+	A = (double*)malloc((num+1)*sizeof(double));
+	B = (double*)malloc((num+1)*sizeof(double));	
+	
+	for(i=num;i>=0;i--){
+		printf("\nEnter the %d. coefficient of the polynom:",i);
+		scanf	("%lf",&A(i));
+	}
+	printf ("Equation: \n");
+	for(i=num;i>=0;i--){
+		if(i!=0)
+		printf(" (%.2lf)*x^%d + ",A(i),i);
+		else if(i==0)
+		printf(" %.2lf ",A(i));
+	}
+	
+	
+	
+	printf ("\nPlease enter the input initial boundary: ");
+	scanf("%lf",&initial_boundary);
+	printf ("\nPlease enter the input final boundary: ");
+	scanf("%lf",&final_boundary);
+	printf ("\nPlease enter the stepsize: ");
+	scanf("%lf",&stepsize);
+	printf ("\nPlease enter the input: ");
+	scanf("%lf",&x);
+	printf ("\n%lf", polysum(num, A, x)); 
+	
+find_interval(polysum,initial_boundary,final_boundary,stepsize,&xleft,&xright,A,B,num);
+	
+	free(A);
+	#undef A
+	free(B);
+	#undef B
+	return 0;
+}
+
+#define A(I) (*(A + I))
+double polysum(int degree, double *A, double x)
+{
+	int i;
+	double sum=0.0;
+	for ( i=0;i<=degree; i++)
+	{
+		sum += A(i)*pow(x,i);	
+	}
+	return sum;
+}
+#undef A
+
+#define A(I) (*(A + I))
+#define B(I) (*(B + I))
+
+void find_interval(
+double (*f)(int,double *,double),
+double xstart,
+double xend,
+double stepsize,
+double *xleft,
+double *xright,
+double *A,
+double *B,
+int num)
+{	
+	int i;
+	double root;
+	for(i=0;i<=num;i++)
+		B(i)=A(i);
+	
+
+	int found_root = TRUE; 	
+	//initialize interval
+	*xleft = xstart;
+	*xright = *xleft + stepsize;
+	
+	//search interval
+	while(*xleft <= xend )
+	{
+		*xleft = *xright;
+		*xright = *xright + stepsize;
+		if(*xright > xend)
+			*xright = xend;
+		else
+		{
+			if((f(num,B,*xleft) * f(num,B,*xright) )> 0.0)
+				found_root = FALSE;
+			else if ((f(num,B,*xleft) * f(num,B,*xright) )<= 0.0)
+			{
+					found_root = TRUE;
+					if((f(num,B,*xleft) * f(num,B,*xright) )== 0.0)
+					{
+						*xleft = *xright;
+						*xright = *xright + stepsize;
+					}
+			}
+			
+			if (found_root==TRUE)
+			{
+				printf (" \nThere is a root between %lf and %lf ", *xleft, *xright);
+				root=(*xleft+*xright)/2;
+				printf ("\nRoot= %lf" ,root);
+				found_root=FALSE;
+			}
+			
+		}
+	}			
+
+}
+
+#undef A
+#undef B
