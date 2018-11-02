@@ -1,0 +1,102 @@
+//Gauss-Jordan elimination with partial pivoting
+#include <stdio.h>
+#include <math.h>
+#define TRUE 1
+#define FALSE 0
+#define A(I,J) (*(a + (I)*n + (J)))
+#define WORK(I,J) (*(work + (I)*(n+1) + (J)))
+
+int gauss_pp(double *a,double b[],double *work,double sol[],double tol,int m,int n)
+{
+	double c,max,temp;
+	int i,j,k,swap;
+	
+	for(i=0; i<m; i++) // Setting up Working Matrix
+	{
+		for(j=0;j<n;j++)
+		WORK(i,j) = A(i,j);
+		WORK(i,n) = b[i];
+	}
+	
+	for(i=0;i<m;i++) // Loops Through Working Matrix for Partial Pivoting Method
+	{
+		max= -1.0;
+		for(k=i;k<m;k++)
+		if(fabs(WORK(k,i))>max)
+		{
+			max = fabs(WORK(k,i));
+			swap = k;
+		}
+		
+		
+		if(max <= tol) // Checking if pivot element is large enough
+		return(FALSE);
+		
+		if(swap != i) // Performing Swap Operation
+		for(k=i; k<=n; k++)
+		{
+			temp = WORK(i,k);
+			WORK(i,k) = WORK(swap,k);
+			WORK(swap,k) = temp;
+		}
+		
+		for(j=0; j<n; j++) // Performing Elimination
+		if(j != i)
+		{
+			c = WORK(j,i) / WORK(i,i);
+			for(k=i;k<=n;k++)
+			WORK(j,k) -= c*WORK(i,k);
+		}
+		
+	}
+	
+	for(i=0;i<m;i++) // Creating Solution Array
+	sol[i] = WORK(i,n) / WORK(i,i);
+	return(TRUE);		
+		
+}
+
+int main()
+{
+	int x,y; //Row and column size of the matrix
+	int i,j,k;
+	printf("Please enter the row and column size of your matrix: \n");
+	scanf("%d%d",&x,&y);
+	double coeff[x][y];
+	double rhs[x];
+	double place[x][y+1];
+	double answer[x];
+	double tolerance;
+	
+	printf("Please enter your tolerance value: ");
+	scanf("%lf",&tolerance);
+	
+	printf("\nPlease enter your matrix: \n");
+	for(i=0; i<x; i++) // Setting up Working Matrix
+	{
+		for(j=0;j<y;j++)
+		scanf("%lf",&coeff[i][j]);
+		
+	}
+	
+	printf("Please enter your RHS matrix: \n");
+	for(i=0; i<x; i++) // Setting up Rhs Matrix
+	{
+		scanf("%lf",&rhs[i]);
+	}
+	
+	if(gauss_pp(&coeff[0][0],rhs,&place[0][0],answer,tolerance,x,y)) 
+	{
+		printf("Solution is: \n");
+		
+		for(i=0; i<x; i++) // Printing Solution
+		{
+		printf("%lf \n",answer[i]);
+		}	
+	}
+	else
+	printf("No solution found\n");
+	
+}
+
+
