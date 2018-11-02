@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#define MAXSIZE 100
+
+struct stack_tempelate  {int count;int entries[MAXSIZE];}; 
+
+
+void init_stack(struct stack_tempelate *s){
+	s->count=0;
+	
+}
+int give_count (struct stack_tempelate *s) {
+	return (s->count) ;
+	
+}
+//eðer stack hali hazýrda boþ deðilse o zaman çýkarabilirsin
+char pop(struct stack_tempelate *s){
+	if(s->count>0)
+	{
+		char a;
+		a=s->entries[s->count];
+		s->count--;
+		
+		return (a);
+		//count ve entries deðerlerini pointer bazýnda deðiþtiriyoruz bu yüzden çýkarýnca sadece entries i döndürsek yeter çünkü ne çýkardýðýmýzý bilemeyiz ama sayýyý biliriz  
+	}
+	else{
+		printf("The stack is empty!!");
+		
+		
+}
+	
+}
+//eðer maximum stack kapasitesi stack in o andaki deðerinden büyükse push yapabilirsin bunu da bir if ile kontrol edersin 
+void push (struct stack_tempelate *s,char p) {
+	if(s->count<MAXSIZE) {
+		s->entries[s->count]= p;
+		s->count++;
+	}
+	else {//full bi stack a push yapýlamaz
+		printf("The stack is full");
+	}
+}
+int two_stack_algo(char* expression,int len) {
+	int result;
+	int i,x,y;
+	char z;
+	struct stack_tempelate operate;
+	struct stack_tempelate operand;
+	init_stack(&operate);
+	init_stack(&operand);
+	
+	for(i=0;i<len;i++) {
+		if(expression[i]>='0' && expression[i]<='9'){
+			push(&operate,expression[i]);
+			operate.count++;
+		}
+	 if(expression[i]=='*'|| expression[i]=='+'|| expression[i]=='-'|| expression[i]=='(') {
+	 
+		push (&operand,expression[i]);
+		operand.count++;
+}
+	if(expression[i]==')') {
+	   x =pop(&operate);
+	   y =pop(&operate);
+		z=pop(&operand);
+		x=(int)(x-48) ;
+		y=(int)(y-48);
+		if(z=='+')
+		result=(x+y);
+		else if(z=='-')
+		 result=(x-y);
+	else if(z=='*')
+	result= (x*y);
+	}
+	push(&operate,result);
+	operate.count++;
+}
+return result;
+}
+main() {
+	int i,sum=0;
+char expression[MAXSIZE];
+	printf("Enter your expression: \n");
+
+	for(i=0;i<17;i++) {
+		scanf("%c",&expression[i]);
+	}
+
+  sum=two_stack_algo(expression,i);
+  printf("%d",sum);
+}
+
+
