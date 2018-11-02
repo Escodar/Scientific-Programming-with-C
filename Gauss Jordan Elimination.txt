@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <math.h>
+#define TRUE 1
+#define FALSE 0
+#define A(I,J) (*(a + (I)*n + (J)))
+#define B(I,J) (*(b + (I)*n + (J)))
+#define C(I,J) (*(sol + (I)*n + (J)))
+
+#define X(I,J) (*(x + (I)*n + (J)))
+#define Y(I,J) (*(y + (I)*n + (J)))
+
+void transpoze(int m, int n, double *x, double *y)
+{
+	int i,j,k;
+	for(i=0; i<m; i++){
+        for(j=0; j<n; j++){
+            
+            Y(j,i) = X(i,j);
+        }
+    }
+	
+}
+
+
+int gauss_pp(double *a,double *b,double *sol,int m,int n)
+{
+	double c;
+	int i,j,k;
+	
+
+	
+	for(i=0;i<m;i++) // Loops Through Working Matrix for Gauss Method
+	{
+		for(j=0; j<n; j++) // Performing Elimination
+		if(j != i)
+		{
+			c = A(j,i) / A(i,i);
+			for(k=i;k<=n;k++)
+			{
+			A(j,k) -= c*A(i,k);
+			B(j,k) -= c*B(i,k);
+			}
+		
+		}
+		
+	}
+	
+	for(i=0;i<m;i++) // Turning to identity for solution
+	{
+		for(j=0; j<n; j++) 
+	C(i,j) = B(i,j) / A(i,i);
+	}
+	
+	
+		
+}
+
+int main()
+{
+	int x,y; //Row and column size of the matrix
+	int i,j,k;
+	printf("Please enter the row and column size of your matrix: \n");
+	scanf("%d%d",&x,&y);
+	if(x!=y)
+	{
+		printf("Please correct");
+	}
+	double coeff[x][y];
+	double rhs[x][y];
+	double solution[x][y];
+	double trans[y][x];
+
+	printf("\nPlease enter your matrix: \n");
+	for(i=0; i<x; i++) // Setting up Working Matrix
+	{
+		for(j=0;j<y;j++)
+		scanf("%lf",&coeff[i][j]);
+	}
+	
+
+for(i=0;i<x;i++) // Setting up RHS identity
+
+     {
+	    for(j=0;j<y;j++)
+
+           { 
+
+                 if(i==j)
+
+                 {
+
+                         rhs[i][j]=1;
+
+                        
+
+                 }
+
+                 else
+
+                 {
+
+                    rhs[i][j]=0;
+
+                     
+
+                 }
+
+           }
+
+    }
+
+	
+	gauss_pp(&coeff[0][0],&rhs[0][0],&solution[0][0],x,y);
+	
+	printf("Solution is: \n");
+	for(i=0; i<x; i++) // Setting up Working Matrix
+	{
+		for(j=0;j<y;j++)
+		printf("%lf",solution[i][j]);
+	}
+	
+	transpoze(x,y,&coeff[0][0],&trans[0][0]);
+	
+	
+		printf("Transpose is: \n");
+	for(i=0; i<x; i++) // Setting up Working Matrix
+	{
+		for(j=0;j<y;j++)
+		printf("%lf",trans[i][j]);
+	}
+
+	
+}
+
+
